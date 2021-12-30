@@ -1,14 +1,12 @@
 <div class="wrap">
-    <h1>Posts Remover</h1>
-    <p>Select post type</p>
     <div id="posts-remover-app">
         <form id="posts-remover-form">
             <div class="posts-remover-filters">
                 <select name="post_type" id="post_type_filter">
-                    <option selected disabled>Choose Post Type</option>
+                    <option selected disabled>Select Post Type</option>
                     <?php
                     $post_types = get_post_types();
-                    dbg($post_types);
+                    // dbg($post_types);
                     foreach ($post_types as $type) :
                         if (!$name = pr_get_post_name($type)) continue;
                     ?>

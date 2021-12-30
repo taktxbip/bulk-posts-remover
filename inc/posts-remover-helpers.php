@@ -13,11 +13,12 @@ if (!function_exists('dbg')) {
     }
 }
 
-
 if (!function_exists('pr_get_post_name')) {
     function pr_get_post_name($slug)
     {
         switch ($slug) {
+            case 'revision':
+                return 'Revisions';
             case 'post':
                 return 'Posts';
             case 'page':

@@ -1,6 +1,8 @@
 import './main-admin.scss';
 'use strict';
 
+import { defaultAjax } from './modules/helpers';
+
 (function ($) {
     var state = {
         run: false,
@@ -73,29 +75,6 @@ import './main-admin.scss';
         else {
             summary.html('<p>Select post type first</p>');
         }
-    }
-
-    function defaultAjax(formID, action, type, callback) {
-        var form = $('#' + formID);
-
-        form.on('submit', function (e) {
-            e.preventDefault();
-
-            if (form.hasClass('loading')) return;
-            form.addClass('loading');
-
-            var formdata = form.serialize() + '&action=' + action + '&nonce_code=' + bpr_ajax.nonce;
-
-            $.ajax({
-                url: bpr_ajax.url,
-                data: formdata,
-                type: type,
-                success: function (response) {
-                    var data = JSON.parse(response);
-                    callback(data);
-                },
-            });
-        });
     }
 
     function updateProgressBar() {

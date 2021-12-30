@@ -40,9 +40,8 @@ class Bulk_Posts_Remover
 
     private function require()
     {
-        require_once __DIR__ . '/inc/posts-remover-functions.php';
-        require_once __DIR__ . '/inc/posts-remover-menu.php';
-        require_once __DIR__ . '/inc/classes/class-posts-remover.php';
+        require_once __DIR__ . '/inc/posts-remover-helpers.php';
+        require_once __DIR__ . '/inc/class-bpr.php';
     }
 
     public function init()
@@ -51,15 +50,17 @@ class Bulk_Posts_Remover
 
     public function admin_enqueue_scripts()
     {
+        $current_page = get_current_screen()->base;
 
-        wp_enqueue_style($this->plugin_domain . '-styles', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.css', [], $this->version);
-        wp_enqueue_script($this->plugin_domain . '-scripts', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.js', ['jquery'], $this->version, true);
+        if ($current_page === 'tools_page_bulk-posts-remover') {
+            wp_enqueue_style($this->plugin_domain . '-styles', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.css', [], $this->version);
+            wp_enqueue_script($this->plugin_domain . '-scripts', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.js', ['jquery'], $this->version, true);
 
-        // bpr_ajax
-        wp_localize_script($this->plugin_domain . '-scripts', $this->plugin_lower_domain . '_ajax', [
-            'url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('myajax-nonce')
-        ]);
+            wp_localize_script($this->plugin_domain . '-scripts', $this->plugin_lower_domain . '_ajax', [
+                'url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('myajax-nonce')
+            ]);
+        }
     }
 
     /**
