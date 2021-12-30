@@ -30,7 +30,10 @@ module.exports = (env, argv) => {
 
         switch (process.platform) {
             case 'win32': return ['echo "Windows is not supported"'];
-            case 'darwin': return [`zip -r ${package.name}.zip ./* ${exclude.join(' ')}`];
+            case 'darwin': return [
+                'cp public/* assets/',
+                `zip -r ${package.name}.zip ./* ${exclude.join(' ')}`
+            ];
             default: return [];
         }
     };

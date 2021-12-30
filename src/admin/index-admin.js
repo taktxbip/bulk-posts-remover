@@ -1,3 +1,6 @@
+import './main-admin.scss';
+'use strict';
+
 (function ($) {
     var state = {
         run: false,
@@ -15,11 +18,11 @@
         var data = {
             post_type: state.post_type,
             ids: state.ids.slice(0, 10),
-            nonce_code: myajax.nonce,
+            nonce_code: bpr_ajax.nonce,
             action: 'remove_posts'
         };
         $.ajax({
-            url: myajax.url,
+            url: bpr_ajax.url,
             data: data,
             type: 'POST',
             success: function (response) {
@@ -81,10 +84,10 @@
             if (form.hasClass('loading')) return;
             form.addClass('loading');
 
-            var formdata = form.serialize() + '&action=' + action + '&nonce_code=' + myajax.nonce;
+            var formdata = form.serialize() + '&action=' + action + '&nonce_code=' + bpr_ajax.nonce;
 
             $.ajax({
-                url: myajax.url,
+                url: bpr_ajax.url,
                 data: formdata,
                 type: type,
                 success: function (response) {

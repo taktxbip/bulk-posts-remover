@@ -1,6 +1,6 @@
 <?php
 /*
-* Plugin Name: Wordpress Posts Remover
+* Plugin Name: Bulk Posts Remover
 * Plugin URI: https://evdesign.ru/
 * Description: Removes posts, images in few clicks
 * Version: 0.3
@@ -33,7 +33,6 @@ class Bulk_Posts_Remover
         // $this->views_dir = trailingslashit( dirname( __FILE__ ) ) . 'server/views';
 
         $this->require();
-        $this->load();
 
         add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
         add_action('init', [$this, 'init']);
@@ -41,23 +40,22 @@ class Bulk_Posts_Remover
 
     private function require()
     {
-        require_once __DIR__ . '/inc/helpers.php';
-    }
-
-    private function load()
-    {
+        require_once __DIR__ . '/inc/posts-remover-functions.php';
+        require_once __DIR__ . '/inc/posts-remover-menu.php';
+        require_once __DIR__ . '/inc/classes/class-posts-remover.php';
     }
 
     public function init()
     {
-    
     }
 
     public function admin_enqueue_scripts()
     {
+
         wp_enqueue_style($this->plugin_domain . '-styles', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.css', [], $this->version);
         wp_enqueue_script($this->plugin_domain . '-scripts', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.js', ['jquery'], $this->version, true);
 
+        // bpr_ajax
         wp_localize_script($this->plugin_domain . '-scripts', $this->plugin_lower_domain . '_ajax', [
             'url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('myajax-nonce')

@@ -1,6 +1,6 @@
 {
-    "name": "php-run",
-    "version": "0.01",
+    "name": "bpr",
+    "version": "0.1",
     "description": "Plugin Boilerplate",
     "scripts": {
         "start": "webpack --watch --mode development",
