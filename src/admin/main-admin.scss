@@ -1,73 +1,128 @@
+#posts-remover-app {
+    position: relative;
+    margin-top: 30px;
+    &.bpr-settings {
+        tbody {
+            input {
+                min-width: 200px;
+            }
+        }
+    }
+    .posts-remover {
+        &-elapsed,
+        &-remaining {
+            span:first-child {
+                font-size: 12px;
+            }
+        }
+        &-filters {
+            margin-bottom: 20px;
+        }
+        &-progressbar {
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), 0 1px rgba(255, 255, 255, 0.08);
+        }
+        &-remaining {
+            text-align: right;
+        }
+        &-main {
+            width: calc(100% - 330px);
+        }
+        &-sidebar {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 300px;
+            float: right;
+        }
+        &-box {
+            background-color: #fff;
+            padding: 30px;
+            margin-bottom: 30px;
+            h2 {
+                margin: 0;
+            }
+            p {
+                margin-top: 16px;
+            }
+        }
+    }
+    .progressbar {
+        height: 34px;
+        border-radius: 4px;
+        position: relative;
+        background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+        background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+        background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+        transition: 0.4s linear;
+        transition-property: opacity, width, background-color;
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        color: #fff;
+        padding-left: 10px;
+        box-sizing: border-box;
+        background-color: #1e68f2;
+        font-size: 12px;
+        opacity: 0;
+        width: 0;
+        >span {
+            flex: 0 0 auto;
+        }
+    }
+    .glare:before {
+        content: '';
+        position: absolute;
+        width: 200px;
+        left: -200px;
+        z-index: 1000;
+        background-image: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(rgba(255, 255, 255, 0.4)), to(transparent));
+        background-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+        height: 100px;
+        opacity: 0.5;
+        -webkit-animation: shine 7s infinite;
+        animation: shine 4s infinite;
+    }
+    @keyframes shine {
+        0% {
+            left: -200px;
+        }
+        60% {
+            left: -200px;
+        }
+        100% {
+            left: 100%;
+        }
+    }
+}
+
 #posts-remover-form {
     background-color: #fff;
     padding: 30px;
 }
 
-.posts-remover-filters {
-    margin-bottom: 20px;
-}
-
-.posts-remover-progressbar {
-    padding: 4px;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 6px;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), 0 1px rgba(255, 255, 255, 0.08);
-}
-
-.progressbar {
-    height: 34px;
-    border-radius: 4px;
-    position: relative;
-    background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
-    background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
-    background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
-    transition: 0.4s linear;
-    transition-property: opacity, width, background-color;
-    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
-    overflow: hidden;
+#posts-remover-estimate {
     display: flex;
-    align-items: center;
-    color: #fff;
-    padding-left: 10px;
-    box-sizing: border-box;
-    background-color: #1e68f2;
-    font-size: 12px;
-    opacity: 0;
-    width: 0;
-}
-
-.progressbar>span {
-    flex: 0 0 auto;
+    justify-content: space-between;
+    margin-top: 10px;
 }
 
 #posts-remover-log {
     max-height: 300px;
     overflow: auto;
-}
-
-.glare:before {
-    content: '';
-    position: absolute;
-    width: 200px;
-    left: -200px;
-    z-index: 1000;
-    background-image: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(rgba(255, 255, 255, 0.4)), to(transparent));
-    background-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
-    height: 100px;
-    opacity: 0.5;
-    -webkit-animation: shine 7s infinite;
-    animation: shine 4s infinite;
-}
-
-@keyframes shine {
-    0% {
-        left: -200px;
-    }
-    60% {
-        left: -200px;
-    }
-    100% {
-        left: 100%;
+    ol {
+        margin: 0;
+        list-style: none;
+        counter-reset: bpr-counter;
+        li {
+            counter-increment: bpr-counter;
+            &:before {
+                content: counter(bpr-counter) ". ";
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@
 * Plugin URI: https://evdesign.ru/
 * Description: Removes posts, images in few clicks
 * Version: 0.3
-* Author: evdesign
+* Author: Evgenii Savelev
 * Author URI: https://evdesign.ru/
 * License: GPLv2 or later
 * Text Domain: bpr
@@ -55,7 +55,12 @@ class Bulk_Posts_Remover
         if ($current_page === 'tools_page_bulk-posts-remover') {
             wp_enqueue_style($this->plugin_domain . '-styles', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.css', [], $this->version);
             wp_enqueue_script($this->plugin_domain . '-scripts', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.js', ['jquery'], $this->version, true);
+            wp_enqueue_script('jquery-ui-datepicker');
 
+            // You need styling for the datepicker. For simplicity I've linked to the jQuery UI CSS on a CDN.
+            wp_register_style('jquery-ui', 'https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css');
+            wp_enqueue_style('jquery-ui');
+            
             wp_localize_script($this->plugin_domain . '-scripts', $this->plugin_lower_domain . '_ajax', [
                 'url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('myajax-nonce')

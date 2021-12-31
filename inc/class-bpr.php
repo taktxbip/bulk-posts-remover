@@ -1,17 +1,95 @@
 <?php
 final class BPR
 {
+    private $options_name = 'bpr_settings';
+    private $settings_fields = [
+        [
+            'field_label' => 'Chunk Size',
+            'field_name' => 'chunk_size',
+            'description' => 'How many posts will be removed at once. Maximum is 800. Use large values for light tasks and small for heavy.',
+            'default_value' => 100,
+            'type' => 'number'
+        ]
+    ];
+
     public function __construct()
     {
-        add_action('wp_ajax_get_posts_ids', [$this, 'get_posts_ids']);
-        add_action('wp_ajax_nopriv_get_posts_ids', [$this, 'get_posts_ids']);
+        $ajax = [
+            'get_posts_ids_ajax',
+            'remove_posts_ajax'
+        ];
 
-        add_action('wp_ajax_remove_posts', [$this, 'remove_posts']);
-        add_action('wp_ajax_nopriv_remove_posts', [$this, 'remove_posts']);
+        foreach ($ajax as $name) {
+            add_action('wp_ajax_' . $name, [$this, $name]);
+            add_action('wp_ajax_nopriv_' . $name, [$this, $name]);
+        }
+
+        add_action('admin_init', [$this, 'register_settings']);
 
         add_action('admin_menu', function () {
             add_submenu_page('tools.php', 'Bulk Posts Remover', 'Bulk Posts Remover', 'administrator', 'bulk-posts-remover', [$this, 'view'], 8);
         });
+    }
+
+    public function register_settings()
+    {
+        // If plugin settings don't exist, then create them
+        if (!get_option($this->options_name)) add_option($this->options_name);
+
+        add_settings_section(
+            'bpr_settings_section',
+            'Settings',
+            null,
+            'bulk-posts-remover'
+        );
+
+        foreach ($this->settings_fields as $field) {
+            $args = [
+                'field_name'  => $field['field_name'],
+                'type' => $field['type']
+            ];
+
+            if (isset($field['description']) && $field['description']) {
+                $args['description'] = __($field['description'], 'bpr');
+            }
+
+            if (isset($field['default_value']) && $field['default_value']) {
+                $args['default_value'] = __($field['default_value'], 'bpr');
+            }
+
+            add_settings_field($field['field_name'], __($field['field_label'], 'bpr'), [$this, 'settings_fields_callback'], 'bulk-posts-remover', 'bpr_settings_section', $args);
+        }
+
+        register_setting($this->options_name, $this->options_name);
+    }
+
+    public function settings_fields_callback($args)
+    {
+        $value = $this->pre_field($args['field_name'], $args['default_value']);
+        $name = $this->options_name . '[' . $args['field_name'] . ']';
+        switch ($args['type']) {
+            case 'text':
+            case 'email':
+                echo '<input type="' . $args['type'] . '" id="' . $args['field_name'] . '" name="' . $name . '" value="' . $value . '" />';
+                break;
+            case 'number':
+                echo '<input min="1" max="800" type="' . $args['type'] . '" id="' . $args['field_name'] . '" name="' . $name . '" value="' . $value . '" />';
+                break;
+        }
+        if (isset($args['description']) && $args['description']) {
+            echo '<p class="description">' . $args['description'] . '</p>';
+        }
+    }
+
+    private function pre_field($option_key, $default_val = '')
+    {
+        $options = get_option($this->options_name);
+
+        if (isset($options[$option_key]) && $options[$option_key]) {
+            return esc_html($options[$option_key]);
+        }
+
+        return $default_val;
     }
 
     public function view()
@@ -21,23 +99,25 @@ final class BPR
         $active_tab = isset($_GET['tab']) && $_GET['tab'] ? sanitize_text_field($_GET['tab']) : null;
 
         Bulk_Posts_Remover::get_template('posts-remover-tabs.php', ['active_tab' => $active_tab]);
-
+        $localize_args = [];
         switch ($active_tab) {
             case null:
+                $options = get_option($this->options_name);
+                $chunk_size = isset($options['chunk_size']) && $options['chunk_size'] ? $options['chunk_size'] : 80;
+                $localize_args['chunkSize']  = $chunk_size;
                 Bulk_Posts_Remover::get_template('posts-remover-main.php');
                 break;
             case 'settings':
                 Bulk_Posts_Remover::get_template('posts-remover-settings.php');
                 break;
-            case 'about':
-                Bulk_Posts_Remover::get_template('posts-remover-about.php');
-                break;
             default:
                 break;
         }
+
+        wp_localize_script('bpr-scripts', 'bpr', $localize_args);
     }
 
-    public function get_posts_ids()
+    public function get_posts_ids_ajax()
     {
         check_ajax_referer('myajax-nonce', 'nonce_code');
         if (!current_user_can('administrator')) wp_die();
@@ -45,53 +125,63 @@ final class BPR
         $post_type = isset($_GET['post_type']) ? $_GET['post_type'] : '';
 
         if (!$post_type) {
-            echo json_encode(array('status' => 0));
+            wp_send_json(['status' => 0]);
             wp_die();
         }
 
-        echo json_encode(array('status' => 1, 'post_type' => $post_type, 'ids' => $this->count_posts($post_type)));
+        wp_send_json(['status' => 1, 'ids' => $this->get_posts_ids($_GET)]);
         wp_die();
     }
 
-    public function remove_posts()
+    public function remove_posts_ajax()
     {
         check_ajax_referer('myajax-nonce', 'nonce_code');
+
         if (!current_user_can('administrator')) wp_die();
 
         $post_type = isset($_POST['post_type']) ? $_POST['post_type'] : '';
-        $ids = $_POST['ids'];
+        $ids = json_decode($_POST['ids']);
 
         $log = [];
-        if ($post_type == 'attachment') {
-            foreach ($ids as $id) {
-                $log[] = '<strong>Removed ' . $post_type . ' id: ' . $id . '.</strong> ' . get_the_title($id);
-                if ($id > 10000) {
-                    // wp_delete_attachment($id, true);
-                }
+        if (!is_array($ids)) {
+            wp_send_json(['status' => 0, 'message' => 'Error. Wrong IDs format']);
+            wp_die();
+        }
+        foreach ($ids as $id) {
+            $title = get_the_title($id);
+            $status = null;
+            if ($post_type == 'attachment') {
+                $status = wp_delete_attachment($id, true);
+            } else {
+                $status = wp_delete_post($id, true);
             }
-        } else {
-            foreach ($ids as $id) {
-                $log[] = '<strong>Removed ' . $post_type . ' id: ' . $id . '.</strong> ' . get_the_title($id);
-                // wp_delete_post($id, true);
-            }
+            $status = $status ? 'Removed ' : 'Failed to remove ';
+            $log[] = $status . $post_type . ' with id: ' . $id . '. ' . $title;
         }
 
-        echo json_encode(array('status' => 0, 'log' => $log));
+        wp_send_json(['status' => 1, 'log' => $log]);
         wp_die();
     }
 
 
-    private function count_posts($post_type)
+    private function get_posts_ids($args)
     {
-        $args = array(
+        dbg('get_posts_ids');
+        $defaults = array(
+            'date_from' => '',
+            'date_to' => '',
+        );
+
+        $args = wp_parse_args($args, $defaults);
+
+        $args = [
             'post_status' => 'publish',
-            'post_type'   => $post_type,
+            'post_type'   => $args['post_type'],
             'numberposts' => -1,
             'fields' => 'ids'
-        );
-        if ($post_type == 'attachment') $args['post_mime_type'] = 'image';
-        $ids = get_posts($args);
-        return $ids;
+        ];
+        if ($args['post_type'] == 'attachment') $args['post_mime_type'] = 'image';
+        return get_posts($args);
     }
 };
 
