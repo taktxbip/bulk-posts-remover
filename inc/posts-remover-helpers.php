@@ -12,25 +12,3 @@ if (!function_exists('dbg')) {
         }
     }
 }
-
-if (!function_exists('pr_get_post_name')) {
-    function pr_get_post_name($slug)
-    {
-        switch ($slug) {
-            case 'revision':
-                return 'Revisions';
-            case 'post':
-                return 'Posts';
-            case 'page':
-                return 'Pages';
-            case 'product_variation':
-                return 'WC Product Variations (product_variation)';
-            case 'product':
-                return 'WC Product (product)';
-            case 'attachment':
-                return 'Media Images (attachment)';
-            default:
-                return false;
-        }
-    }
-}

@@ -105,6 +105,7 @@ final class BPR
                 $options = get_option($this->options_name);
                 $chunk_size = isset($options['chunk_size']) && $options['chunk_size'] ? $options['chunk_size'] : 80;
                 $localize_args['chunkSize']  = $chunk_size;
+
                 Bulk_Posts_Remover::get_template('posts-remover-main.php');
                 break;
             case 'settings':
@@ -166,7 +167,6 @@ final class BPR
 
     private function get_posts_ids($args)
     {
-        dbg('get_posts_ids');
         $defaults = array(
             'date_from' => '',
             'date_to' => '',
@@ -174,14 +174,41 @@ final class BPR
 
         $args = wp_parse_args($args, $defaults);
 
-        $args = [
-            'post_status' => 'publish',
+        // Date filter
+        $date_query = [];
+        if ($args['date_from'] || $args['date_to']) {
+            $date_query['inclusive'] = true;
+        }
+
+        if ($args['date_from']) {
+            $date_query['after'] = $args['date_from'];
+        }
+
+        if ($args['date_to']) {
+            $date_query['before'] = $args['date_to'];
+        }
+
+        // Create posts query
+        $posts_args = [
+            'post_status' => 'all',
             'post_type'   => $args['post_type'],
             'numberposts' => -1,
             'fields' => 'ids'
         ];
-        if ($args['post_type'] == 'attachment') $args['post_mime_type'] = 'image';
-        return get_posts($args);
+
+        if (!empty($date_query)) {
+            $posts_args['date_query'] = [$date_query];
+        }
+
+        if ($posts_args['post_type'] == 'attachment') {
+            $posts_args['post_mime_type'] = [
+                'image/png',
+                'image/jpeg',
+                'image/gif'
+            ];
+        }
+
+        return get_posts($posts_args);
     }
 };
 

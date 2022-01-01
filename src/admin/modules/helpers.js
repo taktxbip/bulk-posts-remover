@@ -16,6 +16,7 @@ function defaultAjax(formID, action, type, callbackBefore, callbackSuccess) {
             data: formdata,
             type: type,
             success: function (data) {
+                form.removeClass('loading');
                 callbackSuccess(data);
             },
         });

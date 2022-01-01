@@ -3,7 +3,7 @@
 * Plugin Name: Bulk Posts Remover
 * Plugin URI: https://evdesign.ru/
 * Description: Removes posts, images in few clicks
-* Version: 0.3
+* Version: 0.9
 * Author: Evgenii Savelev
 * Author URI: https://evdesign.ru/
 * License: GPLv2 or later
@@ -28,9 +28,8 @@ class Bulk_Posts_Remover
     public function __construct()
     {
         $this->plugin_domain = 'bpr';
-        $this->version = '0.4';
+        $this->version = '0.9';
         $this->plugin_lower_domain = str_replace('-', '_', $this->plugin_domain);
-        // $this->views_dir = trailingslashit( dirname( __FILE__ ) ) . 'server/views';
 
         $this->require();
 
@@ -55,11 +54,11 @@ class Bulk_Posts_Remover
         if ($current_page === 'tools_page_bulk-posts-remover') {
             wp_enqueue_style($this->plugin_domain . '-styles', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.css', [], $this->version);
             wp_enqueue_script($this->plugin_domain . '-scripts', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.js', ['jquery'], $this->version, true);
-            wp_enqueue_script('jquery-ui-datepicker');
+            // wp_enqueue_script('jquery-ui-datetimepicker');
 
-            // You need styling for the datepicker. For simplicity I've linked to the jQuery UI CSS on a CDN.
-            wp_register_style('jquery-ui', 'https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css');
-            wp_enqueue_style('jquery-ui');
+            // // You need styling for the datepicker. For simplicity I've linked to the jQuery UI CSS on a CDN.
+            // wp_register_style('jquery-ui', 'https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css');
+            // wp_enqueue_style('jquery-ui');
             
             wp_localize_script($this->plugin_domain . '-scripts', $this->plugin_lower_domain . '_ajax', [
                 'url' => admin_url('admin-ajax.php'),

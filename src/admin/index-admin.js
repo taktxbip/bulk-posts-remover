@@ -1,7 +1,9 @@
 import './main-admin.scss';
+import 'jquery-datetimepicker/build/jquery.datetimepicker.min.css';
 'use strict';
-
+import 'jquery-datetimepicker/build/jquery.datetimepicker.full.min';
 import { defaultAjax, parseHms } from './modules/helpers';
+import Modal from './modules/modal';
 
 (function ($) {
     const state = {
@@ -9,11 +11,10 @@ import { defaultAjax, parseHms } from './modules/helpers';
         pause: false,
         ids: null,
         length: null,
-        post_type: null,
         startTime: null,
         chunkSize: 100,
-        formdata: null
-
+        formdata: null,
+        modal: null
     };
 
     $(function () {
@@ -25,7 +26,7 @@ import { defaultAjax, parseHms } from './modules/helpers';
 
         initDate();
 
-        defaultAjax('posts-remover-form', 'get_posts_ids_ajax', 'GET', beforeStart, prepareRemover);
+        defaultAjax('posts-remover-form', 'get_posts_ids_ajax', 'GET', beforeStart, showModal);
     });
 
     function beforeStart() {
@@ -34,36 +35,10 @@ import { defaultAjax, parseHms } from './modules/helpers';
     }
 
     function initDate() {
-        const dateFormat = 'mm/dd/yy';
-
-        const from = $('#date_from')
-            .datepicker({
-                defaultDate: '-1y',
-                changeMonth: true,
-                numberOfMonths: 1
-            })
-            .on('change', function () {
-                to.datepicker('option', 'minDate', getDate(this));
-            });
-
-        const to = $('#date_to').datepicker({
-            defaultDate: '+1w',
-            changeMonth: true,
-            numberOfMonths: 1
-        })
-            .on('change', function () {
-                from.datepicker('option', 'maxDate', getDate(this));
-            });
-
-        function getDate(element) {
-            let date;
-            try {
-                date = $.datepicker.parseDate(dateFormat, element.value);
-            } catch (error) {
-                date = null;
-            }
-            return date;
-        }
+        $.datetimepicker.setLocale('en');
+        $('#posts-remover-app .datetimepicker').datetimepicker({
+            timepicker: true
+        });
     }
 
     function oneStepAjax(callback) {
@@ -105,10 +80,29 @@ import { defaultAjax, parseHms } from './modules/helpers';
         }
     }
 
+    function showModal(data) {
+        if (!data.status) {
+            const summary = $('#posts-remover-summary');
+            summary.html('<p><strong>Select post type first</strong></p>');
+            resetState();
+            return;
+        }
+
+        const urlSearchParams = new URLSearchParams('?' + state.formdata);
+        const args = {
+            postType: urlSearchParams.get('post_type'),
+            dateFrom: urlSearchParams.get('date_from'),
+            dateTo: urlSearchParams.get('date_to'),
+            found: data.ids.length
+        };
+        state.modal = new Modal(args, prepareRemover, data);
+    }
+
     function prepareRemover(data) {
         const button = $('#posts-remover-form button[type=submit]');
         button.html('Removing...');
         const summary = $('#posts-remover-summary');
+
         if (data.status) {
             summary.html('<p>Found ' + data.ids.length + ' posts</p>');
             if (!data.ids.length) {
@@ -119,15 +113,11 @@ import { defaultAjax, parseHms } from './modules/helpers';
                 state.ids = data.ids;
                 state.run = true;
                 state.length = data.ids.length;
-                state.post_type = data.post_type;
                 state.startTime = Date.now();
                 oneStepAjax(updateIds);
             }
         }
-        else {
-            summary.html('<p>Select post type first</p>');
-            resetState();
-        }
+
     }
 
     function resetState() {

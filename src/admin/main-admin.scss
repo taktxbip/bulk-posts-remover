@@ -1,6 +1,9 @@
 #posts-remover-app {
     position: relative;
     margin-top: 30px;
+    .title-log {
+        margin: 20px 0 0;
+    }
     &.bpr-settings {
         tbody {
             input {
@@ -17,6 +20,21 @@
         }
         &-filters {
             margin-bottom: 20px;
+            >h4 {
+                margin: 0;
+            }
+            .filters-wrap {
+                display: flex;
+                flex-wrap: wrap;
+                margin: 0 -5px;
+                >* {
+                    margin: 5px 5px 0;
+                    @media all and (max-width: 860px) {
+                        width: 100%;
+                        max-width: 100%;
+                    }
+                }
+            }
         }
         &-progressbar {
             padding: 4px;
@@ -29,6 +47,9 @@
         }
         &-main {
             width: calc(100% - 330px);
+            @media all and (max-width: 860px) {
+                width: 100%;
+            }
         }
         &-sidebar {
             position: absolute;
@@ -36,6 +57,11 @@
             top: 0;
             width: 300px;
             float: right;
+            @media all and (max-width: 860px) {
+                width: 100%;
+                float: unset;
+                position: relative;
+            }
         }
         &-box {
             background-color: #fff;
@@ -114,6 +140,7 @@
 #posts-remover-log {
     max-height: 300px;
     overflow: auto;
+    margin-bottom: 30px;
     ol {
         margin: 0;
         list-style: none;
@@ -122,6 +149,68 @@
             counter-increment: bpr-counter;
             &:before {
                 content: counter(bpr-counter) ". ";
+            }
+        }
+    }
+}
+
+.bpr-modal {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    display: none;
+    &:after {
+        content: '';
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.171);
+        width: 100%;
+        height: 100%;
+    }
+    &.show {
+        display: flex;
+    }
+    .icon-close {
+        width: 14px;
+        height: 14px;
+        margin: auto;
+    }
+    &-close {
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    &-container {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+        background-color: #fff;
+        padding: 30px;
+        margin: auto;
+        z-index: 1;
+        h2 {
+            margin-top: 0;
+        }
+        h4 {
+            margin-bottom: 0;
+        }
+        table {
+            width: 100%;
+            margin-top: 5px;
+            border-collapse: collapse;
+            td {
+                padding: 5px 20px 5px 0;
+                border-bottom: 1px solid #f5f5f5;
+            }
+            tr:last-child td {
+                border-bottom: none;
             }
         }
     }
