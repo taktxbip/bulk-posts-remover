@@ -73,11 +73,11 @@
         <aside class="posts-remover-sidebar">
             <div class="posts-remover-box">
                 <h2>What is this?</h2>
-                <p>This is </p>
+                <p>This is a bulk post remover tool. Just remove thousands of posts with few clicks. Watch how it goes with time estimate.</p>
             </div>
             <div class="posts-remover-box">
                 <h2>How does this work?</h2>
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Corrupti quibusdam sit fugit numquam minus facere quia veritatis reiciendis, quam placeat temporibus aspernatur eligendi maiores blanditiis. Quas voluptates praesentium quod velit.</p>
+                <p>Set filters first. The plugin sends an AJAX request to get all IDs matched. After confirmation, according to chunk size, it removes these posts by IDs.</p>
             </div>
         </aside>
     </div>

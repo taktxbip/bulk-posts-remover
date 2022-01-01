@@ -6,7 +6,7 @@ final class BPR
         [
             'field_label' => 'Chunk Size',
             'field_name' => 'chunk_size',
-            'description' => 'How many posts will be removed at once. Maximum is 800. Use large values for light tasks and small for heavy.',
+            'description' => 'How many posts will be removed per request. Maximum is 800. Use large values for light tasks and small for heavy.',
             'default_value' => 100,
             'type' => 'number'
         ]

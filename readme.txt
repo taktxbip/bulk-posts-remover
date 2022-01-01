@@ -9,59 +9,44 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-PHP editor in WordPress dashboard for administrator. Code and run PHP scripts.
+A bulk posts remover tool. Easily remove thousands of posts with few clicks.
 
 == Description ==
 
-Run custom PHP scripts from WordPress dashboard. PHP Run plugin is for developers. 
+Bulk posts remover allows you to remove thousands of posts, custom posts, attachments by few clicks.
 
-You can run simple code like getting user meta.
+You can set post type and dates to define what posts will be removed.
 
-There is more advanced mode as well. Run heavy code that will be processed in chunks. For example, you have 100 000 posts with custom meta fields that you want to change, do it in this way:
-- Write code to get posts IDs
-- Write code to process single post.
-- Set chunk size.
-- Press execute! 
-- Wait watching progress and debug information.
+Time estimate is available during the process.
 
-You can save your code to use later. Code gets saved on client side in localStorge.
+Watch logs in realm time to see what posts were removed.
 
 #### How does this work?
 
-Plugin sends code via AJAX request, executes and send back output. For advanced mode, it executes code in chunk mode. Chunk size can be set on settings page. Only super administrator can use this plugin.
+The plugin sends an AJAX request to get all IDs matched. After confirmation, according to chunk size, it removes these posts by IDs using AJAX requests.
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/php-run` directory, or install plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to `/wp-content/plugins/bulk-posts-remover` directory, or install plugin through the WordPress plugins screen directly.
 2. Activate plugin through `Plugins` screen in WordPress Admin Panel.
-3. Use `Tools -> PHP Run` screen to start coding.
-
-That's all! Your website is already loading faster!
+3. Use `Tools -> Bulk Posts Remover` screen to start coding.
 
 == Frequently Asked Questions ==
 
 = Why was this plugin created? =
 
-I created it for personal use, but since it is very handy for a developer, I decided to make it public.
-
-= Is it safe? =
-
-I understand the importance of security in that kind of plugin. Yes, it is safe, only super administrator can run code.
+I created it for personal use, but since it is very handy, I decided to make it public.
 
 == Screenshots ==
 
-1. Simple mode
-2. Advanced mode. Code generates posts.
-3. Settings tab.
+1. Confirmation modal before removing process starts
+2. Removing process
+3. Settings tab
 
 == Changelog ==
 
 = 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 1.0 =
-* First version. Simple and advanced modes. Chunk size setting. Save scripts feature.
+* First version. Filters by post type, date. Settings: chunk size.
 
 == Upgrade Notice ==
 

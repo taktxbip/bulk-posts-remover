@@ -1,8 +1,7 @@
 <?php
 /*
 * Plugin Name: Bulk Posts Remover
-* Plugin URI: https://evdesign.ru/
-* Description: Removes posts, images in few clicks
+* Description: A bulk posts remover tool. Easily remove thousands of posts with few clicks.
 * Version: 0.9
 * Author: Evgenii Savelev
 * Author URI: https://evdesign.ru/
@@ -34,17 +33,12 @@ class Bulk_Posts_Remover
         $this->require();
 
         add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
-        add_action('init', [$this, 'init']);
     }
 
     private function require()
     {
         require_once __DIR__ . '/inc/posts-remover-helpers.php';
         require_once __DIR__ . '/inc/class-bpr.php';
-    }
-
-    public function init()
-    {
     }
 
     public function admin_enqueue_scripts()
@@ -54,12 +48,7 @@ class Bulk_Posts_Remover
         if ($current_page === 'tools_page_bulk-posts-remover') {
             wp_enqueue_style($this->plugin_domain . '-styles', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.css', [], $this->version);
             wp_enqueue_script($this->plugin_domain . '-scripts', plugin_dir_url(__FILE__) . 'assets/admin/' . $this->plugin_domain . '-admin.min.js', ['jquery'], $this->version, true);
-            // wp_enqueue_script('jquery-ui-datetimepicker');
 
-            // // You need styling for the datepicker. For simplicity I've linked to the jQuery UI CSS on a CDN.
-            // wp_register_style('jquery-ui', 'https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css');
-            // wp_enqueue_style('jquery-ui');
-            
             wp_localize_script($this->plugin_domain . '-scripts', $this->plugin_lower_domain . '_ajax', [
                 'url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('myajax-nonce')
@@ -152,4 +141,9 @@ class Bulk_Posts_Remover
     }
 }
 
-Bulk_Posts_Remover::getInstance();
+
+add_action('init', function () {
+    if (current_user_can('administrator') && is_admin()) {
+        Bulk_Posts_Remover::getInstance();
+    }
+});
