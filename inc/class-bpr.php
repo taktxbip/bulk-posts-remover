@@ -70,14 +70,14 @@ final class BPR
         switch ($args['type']) {
             case 'text':
             case 'email':
-                echo '<input type="' . $args['type'] . '" id="' . $args['field_name'] . '" name="' . $name . '" value="' . $value . '" />';
+                echo '<input type="' . esc_html__($args['type']) . '" id="' . esc_html__($args['field_name']) . '" name="' . esc_html__($name) . '" value="' . esc_html__($value) . '" />';
                 break;
             case 'number':
-                echo '<input min="1" max="800" type="' . $args['type'] . '" id="' . $args['field_name'] . '" name="' . $name . '" value="' . $value . '" />';
+                echo '<input min="1" max="800" type="' .  esc_html__($args['type']) . '" id="' . esc_html__($args['field_name']) . '" name="' . esc_html__($name) . '" value="' . esc_html__($value) . '" />';
                 break;
         }
         if (isset($args['description']) && $args['description']) {
-            echo '<p class="description">' . $args['description'] . '</p>';
+            echo '<p class="description">' . esc_html__($args['description']) . '</p>';
         }
     }
 
@@ -123,7 +123,7 @@ final class BPR
         check_ajax_referer('myajax-nonce', 'nonce_code');
         if (!current_user_can('administrator')) wp_die();
 
-        $post_type = isset($_GET['post_type']) ? $_GET['post_type'] : '';
+        $post_type = isset($_GET['post_type']) ? sanitize_text_field($_GET['post_type']) : '';
 
         if (!$post_type) {
             wp_send_json(['status' => 0]);
@@ -140,8 +140,11 @@ final class BPR
 
         if (!current_user_can('administrator')) wp_die();
 
-        $post_type = isset($_POST['post_type']) ? $_POST['post_type'] : '';
-        $ids = json_decode($_POST['ids']);
+        $post_type = isset($_POST['post_type']) ? sanitize_text_field($_POST['post_type']) : '';
+        $ids = isset($_POST['ids']) ? json_decode($_POST['ids']) : null;
+        if (is_array($ids)) {
+            $ids = array_map('intval', $ids);
+        }
 
         $log = [];
         if (!is_array($ids)) {
@@ -157,7 +160,7 @@ final class BPR
                 $status = wp_delete_post($id, true);
             }
             $status = $status ? 'Removed ' : 'Failed to remove ';
-            $log[] = $status . $post_type . ' with id: ' . $id . '. ' . $title;
+            $log[] = esc_html__($status . $post_type . ' with id: ' . $id . '. ' . $title);
         }
 
         wp_send_json(['status' => 1, 'log' => $log]);
@@ -181,17 +184,17 @@ final class BPR
         }
 
         if ($args['date_from']) {
-            $date_query['after'] = $args['date_from'];
+            $date_query['after'] = sanitize_text_field($args['date_from']);
         }
 
         if ($args['date_to']) {
-            $date_query['before'] = $args['date_to'];
+            $date_query['before'] = sanitize_text_field($args['date_to']);
         }
 
         // Create posts query
         $posts_args = [
             'post_status' => 'all',
-            'post_type'   => $args['post_type'],
+            'post_type'   => sanitize_text_field($args['post_type']),
             'numberposts' => -1,
             'fields' => 'ids'
         ];

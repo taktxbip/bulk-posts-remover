@@ -31,9 +31,14 @@
                                 '_builtin' => false,
                             ], 'objects', 'and'));
 
+                            $post_types = array_merge($post_types, get_post_types([
+                                'public'   => false,
+                                '_builtin' => false,
+                            ], 'objects', 'and'));
+
                             foreach ($post_types as $name => $item) :
                             ?>
-                                <option value="<?php echo $name ?>"><?php echo $item->label . ' (' . $name . ')' ?></option>
+                                <option value="<?php esc_html_e($name) ?>"><?php esc_html_e($item->label . ' (' . $name . ')') ?></option>
                             <?php endforeach;   ?>
                         </select>
                         <input type="text" class="datetimepicker" name="date_from" value="" placeholder="Date from">

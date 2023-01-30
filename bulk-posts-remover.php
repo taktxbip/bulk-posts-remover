@@ -2,7 +2,7 @@
 /*
 * Plugin Name: Bulk Posts Remover
 * Description: A bulk posts remover tool. Easily remove thousands of posts with few clicks.
-* Version: 0.9
+* Version: 1.0
 * Author: Evgenii Savelev
 * Author URI: https://evdesign.ru/
 * License: GPLv2 or later
@@ -27,7 +27,7 @@ class Bulk_Posts_Remover
     public function __construct()
     {
         $this->plugin_domain = 'bpr';
-        $this->version = '0.9';
+        $this->version = '1.0';
         $this->plugin_lower_domain = str_replace('-', '_', $this->plugin_domain);
 
         $this->require();
