@@ -1,45 +1,45 @@
 class Modal {
-    constructor(args, submitCallback, data) {
-        const { postType, dateFrom, dateTo, found } = { ...args };
-        this.postType = postType;
-        this.dateFrom = dateFrom;
-        this.dateTo = dateTo;
-        this.found = found;
-        this.submitCallback = submitCallback;
-        this.data = data;
+  constructor(args, submitCallback, data) {
+    const { postType, dateFrom, dateTo, found } = { ...args };
+    this.postType = postType;
+    this.dateFrom = dateFrom;
+    this.dateTo = dateTo;
+    this.found = found;
+    this.submitCallback = submitCallback;
+    this.data = data;
 
-        this.insertHtml();
-        this.events();
-    }
+    this.insertHtml();
+    this.events();
+  }
 
-    events() {
-        jQuery('body .bpr-modal').on('click', '.bpr-modal-close, .action-cancel', () => this.closeModal());
-        jQuery('body .bpr-modal').on('click', '.action-submit', () => {
-            this.closeModal();
-            this.submitCallback(this.data);
-        });
-    }
+  events() {
+    jQuery('body .bpr-modal').on('click', '.bpr-modal-close, .action-cancel', () => this.closeModal());
+    jQuery('body .bpr-modal').on('click', '.action-submit', () => {
+      this.closeModal();
+      this.submitCallback(this.data);
+    });
+  }
 
-    closeModal() {
-        jQuery('body .bpr-modal.show').removeClass('show');
-    }
+  closeModal() {
+    jQuery('body .bpr-modal.show').removeClass('show');
+  }
 
-    submit(callback, data) {
-        callback(data);
-        this.closeModal();
-    }
+  submit(callback, data) {
+    callback(data);
+    this.closeModal();
+  }
 
-    insertHtml() {
-        jQuery('body .bpr-modal').remove();
+  insertHtml() {
+    jQuery('body .bpr-modal').remove();
 
-        const footer = ` <div class="bpr-modal-footer">
+    const footer = ` <div class="bpr-modal-footer">
                             <button class="button button-primary button-large action-submit">Remove</button>
                             <button class="button button-secondary button-large action-cancel">Cancel</button>
                         </div>`;
 
-        const entity = this.found === 1 ? 'entity' : 'entities';
+    const entity = this.found === 1 ? 'entity' : 'entities';
 
-        let html = `<div class="bpr-modal show">
+    let html = `<div class="bpr-modal show">
                         <div class="bpr-modal-container">
                             <span class="bpr-modal-close">
                                 <svg role="img" class="icon-close"><use xlink:href="#icon-close"></use></svg>
@@ -65,9 +65,9 @@ class Modal {
                             ${this.found > 0 ? footer : ''}
                         </div>
                     </div>`;
-        const body = jQuery('body');
-        body.append(html);
-    }
+    const body = jQuery('body');
+    body.append(html);
+  }
 }
 
 export default Modal;
