@@ -27,6 +27,7 @@ const firstZero = num => num >= 0 && num < 10 ? `0${num}` : num;
 
 function parseHms(s) {
     return {
+        d: Math.floor(s / (1000 * 60 * 60 * 24)),
         h: firstZero(Math.floor(s / (1000 * 60 * 60) % 24)),
         m: firstZero(Math.floor(s / (1000 * 60) % 60)),
         s: firstZero(Math.floor((s / 1000) % 60))

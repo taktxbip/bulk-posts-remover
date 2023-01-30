@@ -155,6 +155,7 @@ import Modal from './modules/modal';
         remainingTimeEl.find('.s').html(r.s);
         remainingTimeEl.find('.m').html(r.m);
         remainingTimeEl.find('.h').html(r.h);
+        remainingTimeEl.find('.d').html(r.d);
     }
 
     function countElapsedPercent() {

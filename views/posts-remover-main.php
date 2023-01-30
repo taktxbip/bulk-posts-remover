@@ -60,7 +60,7 @@
                     <div class="posts-remover-remaining">
                         <span><strong>Estimate</strong></span>
                         <div class="time">
-                            <span class="h">00</span>:<span class="m">00</span>:<span class="s">00</span>
+                        <span class="d">0</span>d&nbsp;<span class="h">00</span>:<span class="m">00</span>:<span class="s">00</span>
                         </div>
                     </div>
                 </div>
